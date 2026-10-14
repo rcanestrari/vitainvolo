@@ -21,6 +21,20 @@
 			width: 100%;
 			height: 100%;
 		}
+		.legend {
+			background: rgba(255, 255, 255, 0.92);
+			padding: 8px 12px 6px;
+			border-radius: 6px;
+			box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+			font: 12px/1.3 system-ui, sans-serif;
+			width: 190px;
+			color: #222;
+		}
+		.legend .scale { position: relative; margin: 8px 8px 0; }
+		.legend .bar { height: 10px; border-radius: 5px; }
+		.legend .ticks { position: relative; height: 16px; margin-top: 2px; }
+		.legend .ticks span { position: absolute; transform: translateX(-50%); font-size: 11px; }
+		.legend .total { margin-top: 2px; color: #555; font-size: 11px; }
 	</style>
 </head>
 <body>
@@ -108,127 +122,127 @@
 		["Zurigo", 47.3769, 8.5417]
 	];
 
-	// Tratte (senza duplicati, indipendenti dal verso): [da, a]
+	// Tratte: [da, a, numero di voli]. Il conteggio somma i due versi (andata + ritorno).
 	const routes = [
-		["Amsterdam", "Atlanta"],
-		["Amsterdam", "Chicago"],
-		["Amsterdam", "Liverpool"],
-		["Amsterdam", "Minneapolis"],
-		["Amsterdam", "Treviso"],
-		["Ancona", "Catania"],
-		["Ancona", "Trapani"],
-		["Atene", "Milano"],
-		["Atlanta", "Parigi"],
-		["Atlanta", "San Diego"],
-		["Atlanta", "Tucson"],
-		["Barcellona", "La Palma"],
-		["Bari", "Roma"],
-		["Berlino", "Francoforte"],
-		["Buenos Aires", "Amsterdam"],
-		["Calama", "Santiago del Cile"],
-		["Cayenne", "Parigi"],
-		["Chicago", "San Diego"],
-		["Christchurch", "Singapore"],
-		["Christchurch", "McMurdo Station"],
-		["Città del Capo", "Johannesburg"],
-		["Città del Capo", "Losberg"],
-		["Colombo (Sri Lanka)", "Hobart"],
-		["Concordia Station", "Dumont d'Urville Station"],
-		["Cracovia", "Vienna"],
-		["Detroit", "Amsterdam"],
-		["Detroit", "Parigi"],
-		["Doha", "Roma"],
-		["Erfurt", "Monaco (Germania)"],
-		["Francoforte", "Pechino"],
-		["Francoforte", "Città del Capo"],
-		["Ginevra", "Palermo"],
-		["Gran Canaria", "Madrid"],
-		["Hobart", "Melbourne"],
-		["Hobart", "Mario Zucchelli Station"],
-		["Johannesburg", "Zurigo"],
-		["La Palma", "Gran Canaria"],
-		["La Palma", "Madrid"],
-		["La Palma", "Tenerife Norte"],
-		["La Serena", "Calama"],
-		["Londra", "Los Angeles"],
-		["Londra", "San Francisco"],
-		["Los Angeles", "Roma"],
-		["Madrid", "Santiago del Cile"],
-		["Madrid", "Tenerife Norte"],
-		["Madrid", "Venezia"],
-		["Mario Zucchelli Station", "Concordia Station"],
-		["McMurdo Station", "Mario Zucchelli Station"],
-		["Melbourne", "Doha"],
-		["Milano", "Amsterdam"],
-		["Milano", "Atlanta"],
-		["Milano", "Barcellona"],
-		["Milano", "Berlino"],
-		["Milano", "Catania"],
-		["Milano", "Cracovia"],
-		["Milano", "Francoforte"],
-		["Milano", "Londra"],
-		["Milano", "Madrid"],
-		["Milano", "Monaco (Germania)"],
-		["Milano", "New York"],
-		["Milano", "Palermo"],
-		["Milano", "Parigi"],
-		["Milano", "Praga"],
-		["Milano", "Rodi"],
-		["Milano", "Singapore"],
-		["Milano", "Tolosa"],
-		["Milano", "Vienna"],
-		["Milano", "Zurigo"],
-		["Milano", "Dusseldorf"],
-		["Minneapolis", "San Diego"],
-		["Monaco (Germania)", "Varsavia"],
-		["Monaco (Germania)", "Stoccolma"],
-		["Montreal", "Zurigo"],
-		["New York", "San Diego"],
-		["Palermo", "Ancona"],
-		["Palermo", "Berlino"],
-		["Palermo", "Breslavia"],
-		["Palermo", "Colonia"],
-		["Palermo", "Lampedusa"],
-		["Palermo", "Napoli"],
-		["Palermo", "Parigi"],
-		["Palermo", "Pisa"],
-		["Palermo", "Roma"],
-		["Palermo", "Santorini"],
-		["Palermo", "Treviso"],
-		["Palermo", "Venezia"],
-		["Palermo", "Verona"],
-		["Palermo", "Zurigo"],
-		["Palermo", "Trieste"],
-		["Palermo", "Forlì"],
-		["Palermo", "Bari"],
-		["Palermo", "Monaco (Germania)"],
-		["Parigi", "Santiago del Cile"],
-		["Rimini", "Palermo"],
-		["Rodi", "Atene"],
-		["Roma", "Atlanta"],
-		["Roma", "Bologna"],
-		["Roma", "Colombo (Sri Lanka)"],
-		["Roma", "Madrid"],
-		["Roma", "Parigi"],
-		["Roma", "Tenerife"],
-		["Roma", "Trapani"],
-		["Roma", "Venezia"],
-		["Roma", "Zurigo"],
-		["Roma", "Francoforte"],
-		["Roma", "Trieste"],
-		["San Diego", "Detroit"],
-		["San Diego", "San Francisco"],
-		["San Francisco", "Zurigo"],
-		["Santiago del Cile", "Antofagasta"],
-		["Santiago del Cile", "Buenos Aires"],
-		["Santiago del Cile", "Cayenne"],
-		["Santiago del Cile", "La Serena"],
-		["Stoccolma", "Zurigo"],
-		["Tenerife Norte", "Roma"],
-		["Tucson", "Los Angeles"],
-		["Varsavia", "Milano"],
-		["Zurigo", "Chicago"],
-		["Zurigo", "Città del Capo"]
+		["Amsterdam", "Atlanta", 1],
+		["Amsterdam", "Chicago", 2],
+		["Amsterdam", "Liverpool", 2],
+		["Amsterdam", "Milano", 13],
+		["Amsterdam", "Minneapolis", 1],
+		["Amsterdam", "Treviso", 2],
+		["Ancona", "Catania", 6],
+		["Ancona", "Palermo", 31],
+		["Ancona", "Trapani", 2],
+		["Antofagasta", "Santiago del Cile", 2],
+		["Atene", "Milano", 1],
+		["Atlanta", "Milano", 4],
+		["Atlanta", "Parigi", 2],
+		["Atlanta", "San Diego", 5],
+		["Atlanta", "Tucson", 3],
+		["Barcellona", "La Palma", 1],
+		["Barcellona", "Milano", 3],
+		["Bari", "Roma", 1],
+		["Berlino", "Francoforte", 1],
+		["Berlino", "Milano", 7],
+		["Berlino", "Palermo", 2],
+		["Bologna", "Roma", 2],
+		["Breslavia", "Palermo", 2],
+		["Buenos Aires", "Amsterdam", 1],
+		["Calama", "Santiago del Cile", 1],
+		["Catania", "Milano", 34],
+		["Cayenne", "Parigi", 1],
+		["Chicago", "San Diego", 1],
+		["Christchurch", "McMurdo Station", 2],
+		["Christchurch", "Singapore", 2],
+		["Città del Capo", "Johannesburg", 1],
+		["Città del Capo", "Losberg", 2],
+		["Città del Capo", "Zurigo", 2],
+		["Colombo (Sri Lanka)", "Hobart", 1],
+		["Colonia", "Palermo", 2],
+		["Concordia Station", "Dumont d'Urville Station", 1],
+		["Cracovia", "Milano", 2],
+		["Cracovia", "Vienna", 2],
+		["Detroit", "Amsterdam", 1],
+		["Detroit", "Parigi", 1],
+		["Doha", "Roma", 1],
+		["Dusseldorf", "Milano", 2],
+		["Erfurt", "Monaco (Germania)", 2],
+		["Forlì", "Palermo", 6],
+		["Francoforte", "Città del Capo", 1],
+		["Francoforte", "Milano", 31],
+		["Francoforte", "Pechino", 2],
+		["Ginevra", "Palermo", 1],
+		["Gran Canaria", "Madrid", 1],
+		["Hobart", "Mario Zucchelli Station", 1],
+		["Hobart", "Melbourne", 1],
+		["Johannesburg", "Zurigo", 1],
+		["La Palma", "Gran Canaria", 1],
+		["La Palma", "Madrid", 6],
+		["La Palma", "Tenerife Norte", 4],
+		["La Serena", "Calama", 1],
+		["La Serena", "Santiago del Cile", 7],
+		["Lampedusa", "Palermo", 2],
+		["Londra", "Los Angeles", 2],
+		["Londra", "Milano", 10],
+		["Londra", "San Francisco", 2],
+		["Los Angeles", "Roma", 2],
+		["Madrid", "Milano", 7],
+		["Madrid", "Roma", 4],
+		["Madrid", "Santiago del Cile", 2],
+		["Madrid", "Tenerife Norte", 2],
+		["Madrid", "Venezia", 2],
+		["Mario Zucchelli Station", "Concordia Station", 1],
+		["Mario Zucchelli Station", "McMurdo Station", 2],
+		["Melbourne", "Doha", 1],
+		["Milano", "Monaco (Germania)", 11],
+		["Milano", "New York", 6],
+		["Milano", "Palermo", 36],
+		["Milano", "Parigi", 21],
+		["Milano", "Praga", 2],
+		["Milano", "Rodi", 1],
+		["Milano", "Singapore", 2],
+		["Milano", "Tolosa", 2],
+		["Milano", "Vienna", 2],
+		["Milano", "Zurigo", 2],
+		["Minneapolis", "San Diego", 1],
+		["Monaco (Germania)", "Stoccolma", 1],
+		["Monaco (Germania)", "Varsavia", 1],
+		["Montreal", "Zurigo", 2],
+		["Napoli", "Palermo", 2],
+		["New York", "San Diego", 2],
+		["Palermo", "Bari", 1],
+		["Palermo", "Monaco (Germania)", 1],
+		["Palermo", "Parigi", 3],
+		["Palermo", "Pisa", 5],
+		["Palermo", "Rimini", 10],
+		["Palermo", "Roma", 49],
+		["Palermo", "Santorini", 2],
+		["Palermo", "Treviso", 2],
+		["Palermo", "Trieste", 3],
+		["Palermo", "Venezia", 7],
+		["Palermo", "Verona", 2],
+		["Palermo", "Zurigo", 5],
+		["Parigi", "Santiago del Cile", 6],
+		["Rodi", "Atene", 1],
+		["Roma", "Atlanta", 1],
+		["Roma", "Colombo (Sri Lanka)", 1],
+		["Roma", "Francoforte", 1],
+		["Roma", "Parigi", 2],
+		["Roma", "Tenerife", 1],
+		["Roma", "Trapani", 1],
+		["Roma", "Trieste", 2],
+		["Roma", "Venezia", 4],
+		["Roma", "Zurigo", 3],
+		["San Diego", "Detroit", 2],
+		["San Diego", "San Francisco", 1],
+		["San Francisco", "Zurigo", 1],
+		["Santiago del Cile", "Buenos Aires", 1],
+		["Santiago del Cile", "Cayenne", 1],
+		["Stoccolma", "Zurigo", 1],
+		["Tenerife Norte", "Roma", 1],
+		["Tucson", "Los Angeles", 1],
+		["Varsavia", "Milano", 1],
+		["Zurigo", "Chicago", 1]
 	];
 
 	// ---------- Mappa ----------
@@ -290,13 +304,71 @@
 		return segments;
 	}
 
-	for (const [from, to] of routes) {
+	// ---------- Colore e spessore in base alla frequenza ----------
+	// Scala logaritmica: poche tratte hanno moltissimi voli, la maggior parte 1-2.
+	const maxCount = Math.max(...routes.map(r => r[2]));
+	const totalFlights = routes.reduce((sum, r) => sum + r[2], 0);
+
+	// [posizione 0..1, [r, g, b]]: dal blu (poco frequente) al rosso (molto frequente)
+	const stops = [
+		[0.00, [59, 130, 196]],
+		[0.35, [47, 181, 163]],
+		[0.65, [242, 178, 26]],
+		[1.00, [215, 25, 28]]
+	];
+
+	function scale(count) {
+		return maxCount > 1 ? Math.log(count) / Math.log(maxCount) : 0;
+	}
+
+	function colorAt(t) {
+		for (let i = 1; i < stops.length; i++) {
+			if (t <= stops[i][0]) {
+				const [t0, c0] = stops[i - 1], [t1, c1] = stops[i];
+				const f = (t - t0) / (t1 - t0);
+				return 'rgb(' + c0.map((v, k) => Math.round(v + f * (c1[k] - v))).join(',') + ')';
+			}
+		}
+		return 'rgb(' + stops[stops.length - 1][1].join(',') + ')';
+	}
+
+	function styleFor(count) {
+		const t = scale(count);
+		return { color: colorAt(t), weight: 1.5 + 4.5 * t, opacity: 0.55 + 0.35 * t };
+	}
+
+	// Le tratte meno frequenti si disegnano per prime, così le più frequenti restano in primo piano.
+	[...routes].sort((a, b) => a[2] - b[2]).forEach(([from, to, count]) => {
 		if (!coords[from] || !coords[to]) {
 			console.warn('Tratta ignorata, luogo sconosciuto:', from, to);
-			continue;
+			return;
 		}
-		L.polyline(greatCircle(coords[from], coords[to]), { weight: 2, opacity: 0.6 }).addTo(map);
-	}
+		const base = styleFor(count);
+		const line = L.polyline(greatCircle(coords[from], coords[to]), base).addTo(map);
+		line.bindTooltip(from + ' ⇄ ' + to + ' · ' + count + (count === 1 ? ' volo' : ' voli'), { sticky: true });
+		line.on('mouseover', () => line.setStyle({ weight: base.weight + 2, opacity: 1 }));
+		line.on('mouseout', () => line.setStyle(base));
+	});
+
+	// ---------- Legenda ----------
+	const legend = L.control({ position: 'bottomleft' });
+	legend.onAdd = function () {
+		const div = L.DomUtil.create('div', 'legend');
+		const gradient = stops.map(([t, c]) => 'rgb(' + c.join(',') + ') ' + (t * 100) + '%').join(', ');
+		const ticks = [...new Set([1, 2, 5, 10, 20, maxCount].filter(v => v <= maxCount))];
+		div.innerHTML =
+			'<b>Voli per tratta</b>' +
+			'<div class="scale">' +
+				'<div class="bar" style="background:linear-gradient(to right, ' + gradient + ')"></div>' +
+				'<div class="ticks">' +
+					ticks.map(v => '<span style="left:' + (scale(v) * 100) + '%">' + v + '</span>').join('') +
+				'</div>' +
+			'</div>' +
+			'<div class="total">' + routes.length + ' tratte · ' + totalFlights + ' voli</div>';
+		L.DomEvent.disableClickPropagation(div);
+		return div;
+	};
+	legend.addTo(map);
 
 	// ---------- Click sulla mappa ----------
 	const popup = L.popup();
